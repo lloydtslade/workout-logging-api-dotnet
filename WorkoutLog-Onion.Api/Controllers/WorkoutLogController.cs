@@ -11,7 +11,7 @@ using WorkoutLog_Onion.Domain.Models;
 
 namespace WorkoutLog_Onion.Api.Controllers
 {
-    [System.Web.Http.RoutePrefix("api/Workouts")]
+    [System.Web.Http.RoutePrefix("Workouts")]
     public class WorkoutLogController : ApiController
     {
         private readonly IWorkoutService _workoutService;
@@ -26,16 +26,21 @@ namespace WorkoutLog_Onion.Api.Controllers
         /// </summary>
         /// <param name="workoutToAdd"></param>
         /// <returns></returns>
-        [System.Web.Http.HttpPost, System.Web.Http.Route("")]
+        [System.Web.Http.HttpPost, System.Web.Http.Route("add")]
         public IHttpActionResult Post(NewWorkoutMessage workoutToAdd)
         {
-            var newWorkout = Mapper.Map<WorkoutDto>(workoutToAdd);
+
+            if (null == workoutToAdd)
+            {
+                return BadRequest();
+            }
             try
             {
+                var newWorkout = Mapper.Map<WorkoutDto>(workoutToAdd);
                 var workoutAdded = _workoutService.AddWorkout(newWorkout);
                 var location = $"{Request.RequestUri}/{workoutAdded.Id}";
 
-                return Created<object>(location, new {});
+                return Created<object>(location, workoutAdded);
             }
             catch (UnauthorizedAccessException)
             {
@@ -44,9 +49,7 @@ namespace WorkoutLog_Onion.Api.Controllers
             catch (Exception ex)
             {
                 return InternalServerError(ex);
-                
             }
-
         }
 
         /// <summary>
@@ -54,13 +57,13 @@ namespace WorkoutLog_Onion.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("")]
+        [System.Web.Http.Route("all")]
         public IHttpActionResult Get()
         {
             try
-            {               
+            {
                 var workouts = _workoutService.GetAllWorkouts().OrderBy(w => w.WorkoutDate);
-                return Ok(workouts.ToList());
+                return Ok(workouts.ToList().Count == 0 ? new List<WorkoutDto>() : workouts.ToList());
             }
             catch (UnauthorizedAccessException)
             {
@@ -146,7 +149,7 @@ namespace WorkoutLog_Onion.Api.Controllers
 
         [System.Web.Http.Route("")]
         [System.Web.Http.Route("search/{name?}")]
-        public IHttpActionResult Search(string name ="")
+        public IHttpActionResult Search(string name = "")
         {
             try
             {
