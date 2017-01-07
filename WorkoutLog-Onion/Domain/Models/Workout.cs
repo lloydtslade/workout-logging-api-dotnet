@@ -7,10 +7,9 @@ namespace WorkoutLog_Onion.Domain.Models
 {
     public class Workout
     {
+        // currently, no workout objects are created with the constructor, but mapped from a request body. 
         public Workout(IList<Exercise> exercisesPerformed, DateTime workoutDate)
-        {
-
-            Id = new Guid();
+        {           
 
             ExercisesPerformed = exercisesPerformed;
 

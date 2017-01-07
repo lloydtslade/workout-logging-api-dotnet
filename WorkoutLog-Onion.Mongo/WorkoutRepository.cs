@@ -60,15 +60,14 @@ namespace WorkoutLog_Onion.Mongo
 
         }
 
-        public Workout SaveWorkout(Workout workout)
+        public bool SaveWorkout(Workout workout)
         {
+            workout.Id = new Guid();
             var mongoWorkout = Mapper.Map<MongoWorkout>(workout);
            
             var added = Add(mongoWorkout);
-
-            Workout savedWorkout = Mapper.Map<Workout>(added); 
-                
-            return savedWorkout;
+                            
+            return added != null;
            
         }
 

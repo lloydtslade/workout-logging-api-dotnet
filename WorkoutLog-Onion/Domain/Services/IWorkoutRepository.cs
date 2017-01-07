@@ -15,7 +15,7 @@ namespace WorkoutLog_Onion.Domain.Services
         IList<Workout> GetWorkoutsByTypeWithinDateRange(WorkoutType type, DateTime begin, DateTime end);
         IList<Workout> GetWorkoutsByDate(DateTime date);
         IList<Workout> GetAllWorkouts();
-        Workout SaveWorkout(Workout workout);
+        bool SaveWorkout(Workout workout);
         IList<Workout> FindWorkoutsContainingName(string name);
 
     }
